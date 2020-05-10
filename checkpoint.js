@@ -43,7 +43,17 @@ const {
 // allí la recursión
 
 var objContains = function(obj, prop, value){
- 
+    
+    for (const objAn in obj) {
+      if (typeof obj[objAn] === 'object') {
+        obj = obj[objAn];
+        if(obj[prop] === value){
+          return true;
+        }
+        return objContains(obj, prop, value);
+      }
+    }
+    return false;
 }
 
 
@@ -56,10 +66,29 @@ var objContains = function(obj, prop, value){
 //    countArray(array); --> Debería devolver 28 (1 + 2 + 3 + 4 + 5 + 6 + 7)
 // Pista: utilizar el método Array.isArray() para determinar si algun elemento de array es un array anidado
 // [Para más información del método: https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Array/isArray]
-
-var countArray = function(array){
+var countArray = function (array){
+  if (array.length === 0) {
+    return 0;
+  }
   
-}
+  for (var i = 0; i < array.length; i++) {
+    if (Array.isArray (array[i])) {
+      countArray (array[i]);
+    } else {
+    var nuevoArreglo= [];
+    for (var j = 0; j < array.length; j++) {
+      nuevoArreglo[j] = array[i];
+    }
+    }
+  }
+  let total = 0;
+  for(var f = 0; f < nuevoArreglo.length; f++){
+        num = nuevoArreglo[f];
+        total += num;
+    }
+  return total;
+  }
+
 
 // ---------------------
 
@@ -78,8 +107,17 @@ var countArray = function(array){
 //    lista.size(); --> 3
 
 LinkedList.prototype.size = function(){
- 
+
+  let counter = 0;
+  let current = this.head;
+
+  while (current){
+    counter++;
+    current = current.next;
+  }
+  return counter;
 }
+
 
 
 // EJERCICIO 4
@@ -99,8 +137,30 @@ LinkedList.prototype.size = function(){
 //    sin antes tener cargada la posición 0 y 1.
 
 LinkedList.prototype.addInPos = function(pos, value){
-  
+
+  if (pos < 0 || pos > this.size()) return false;
+
+  const nuevoNodo = this.add(value);
+  var current = this.head;
+  var prev;
+
+  if (pos === 0){
+    nuevoNodo.next = current;
+    this.head = nuevoNodo;
+  }else {
+    for (let i = 0; i < pos; i++) {
+      prev = current;
+      current=current.next;
+      
+    }
+
+    nuevoNodo.next = current;
+    prev.next = nuevoNodo;
+    return true;
+  }  
 }
+
+
 
 // EJERCICIO 5
 // Implementar el método reverse dentro del prototype de LinkedList que invierta el orden de la lista
@@ -110,8 +170,10 @@ LinkedList.prototype.addInPos = function(pos, value){
 //    Lista nueva luego de aplicar el reverse: Head --> 13 --> 10 --> 4 --> 1 --> null
 
 LinkedList.prototype.reverse = function(){
- 
+
+
 }
+
 
 
 // ----------------------
@@ -164,6 +226,14 @@ var cardGame = function(mazoUserA, mazoUserB){
 //       5
 
 var generateBST = function(array){
+
+  var BTS = new BinarySearchTree();
+
+  for (let i = 0; i < array.length; i++) {
+    BTS.insert(array[i]);
+  }
+
+  return BTS;
  
 }
 
@@ -185,8 +255,17 @@ var generateBST = function(array){
 
 
 var binarySearch = function (array, target) {
-
-  
+  var min = 0,
+  max = array.length - 1;
+  while (min <= max){
+    var guess = Math.floor((min+max) / 2);
+    if (array[guess] === target ){
+      return guess;
+    } else {
+      (array[guess] < target) ? min = guess + 1 : max = guess - 1;
+    }
+  }
+  return -1;
 }
 
 // EJERCICIO 9
@@ -199,7 +278,20 @@ var binarySearch = function (array, target) {
 
 
 var selectionSort = function(array) {
-  
+    for(var i = 0; i < array.length; i++) {
+    var min = i;
+    for (var j = i + 1; j < array.length; j++) {
+      if(array[j] < array[min]) {
+        min = j;
+      }
+    }
+    if(min !== i) {
+      var save = array[i];
+      array[i] = array[min];
+      array[min] = save;
+    }
+  }
+  return array;
 }
 
 // ----- Closures -----
@@ -217,8 +309,13 @@ var selectionSort = function(array) {
 //    sumaDiez(11); --> Devolverá 21 (Ya que 11 + 10 = 21)
 
 function closureSum(numFijo) {
- 
+ return function(x) {
+  return numFijo + x;
+};
 }
+
+var sum5 = closureSum(5); 
+var sum10 = closureSum(10);
 
 // -------------------
 
